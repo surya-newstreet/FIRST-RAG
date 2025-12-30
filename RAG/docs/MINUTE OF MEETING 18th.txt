@@ -1,0 +1,42 @@
+MINUTE OF MEETING(17th DECS):
+-------------------
+
+- Reviewed overall system hierarchy and multi-tenant, multi-product architecture
+- Discussed where and how product-level data should be stored and reused
+- Clarified preconfig, config, and execution flow and their dependencies
+- Talked about shared/common infrastructure for preconfig, config, and exec
+- Reviewed scheduling, flow design, and e-commerce checks
+- Discussed prompt enhancement and handling multiple applications
+- Reviewed automation progress, completed and pending tasks
+- Identified deployment and retrieval issues that need fixing
+- Discussed DB creation rationale and improvements to DB structure
+
+Learned Topics:-
+
+Neural Networks
+- Learned how neural networks automatically learn complex patterns by adjusting weights and biases
+- Understood neurons as weighted sums with bias followed by activation functions
+
+Neuron & Bias
+- Learned the role of bias in shifting activation thresholds
+- Understood how bias prevents dead neurons and enables learning with ReLU
+
+Activation Functions
+- Learned why activation functions introduce non-linearity
+- Understood ReLU for hidden layers, Sigmoid for binary output, and Softmax for multi-class output
+
+Network Architecture
+- Learned the roles of input, hidden, and output layers
+- Understood how depth and number of neurons affect model capacity
+
+Forward Propagation
+- Learned how data flows through layers to produce predictions
+- Understood weighted sums followed by activation at each layer
+
+Loss Functions
+- Learned how loss quantifies prediction error
+- Understood MSE for regression and cross-entropy for classification
+
+Backpropagation
+- Learned how errors are propagated backward through the network
+- Understood how weights and biases are updated to improve accuracy

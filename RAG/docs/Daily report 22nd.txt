@@ -1,0 +1,78 @@
+--------------------
+Daily_report_22nd
+-------------------
+
+Theory studied-
+
+1. Data Formats:
+   CSV is simple and human-readable but stores everything as strings; JSON is schema-flexible, hierarchical, and used in APIs; Parquet is a binary, columnar, compressed format optimized for big-data analytics.
+   
+2. Core ML Algorithms:
+   Random Forest reduces overfitting via feature and data randomness; SVM finds an optimal separating hyperplane; KNN predicts based on nearest neighbors; Naive Bayes applies Bayes’ theorem assuming feature independence.
+
+3. Unsupervised Learning Types:
+   Includes clustering (K-Means, Hierarchical, DBSCAN, GMM), dimensionality reduction (PCA, t-SNE, UMAP, Autoencoders), and anomaly detection (Isolation Forest, One-Class SVM, LOF).
+
+4. Train / Validation / Test Strategy:
+   Validation helps tune hyperparameters and prevent overfitting; test data must be isolated to avoid leakage; time-series data must be split chronologically.
+
+5. Data Leakage Prevention:
+   Split early, fit preprocessing only on training data, use pipelines, avoid using test data for feature selection or tuning.
+
+6. Class Imbalance Handling:
+   Oversampling (SMOTE, ADASYN) creates synthetic samples; undersampling removes majority samples; algorithm-level methods like class weights modify the loss function—accuracy is unreliable for imbalanced data.
+
+7. Overfitting & Regularization:
+   Overfitting occurs due to high model complexity or limited data; regularization controls complexity via L1 (feature selection), L2 (shrinkage), Elastic Net, pruning, early stopping, dropout, and dimensionality reduction.
+
+8. Regression Models:
+   Linear and polynomial regression for simple patterns; Ridge for correlated features; Lasso for feature selection; SVR for small nonlinear data; tree and ensemble models for complex interactions; neural networks for highly complex functions.
+
+9. Regression Metrics:
+   MAE is robust to outliers, MSE/RMSE penalize large errors, R^2 explains variance, and Adjusted R^2 penalizes unnecessary features.
+
+10. Ensemble Learning:
+    Bagging builds models in parallel to reduce variance; boosting builds sequentially to fix errors; stacking combines multiple models using a meta-learner.
+
+11. Gradient Descent Variants:
+    Batch GD is stable but slow; SGD is fast but noisy; Mini-Batch GD balances speed and stability and is used in most real-world ML systems.
+
+12. Classification Models:
+    Logistic Regression uses sigmoid and log loss; Decision Trees use entropy/Gini; SVM works well for high-dimensional data; Naive Bayes excels in text classification; ensembles like RF and XGBoost give state-of-the-art performance.
+
+13. Classification Metrics:
+    Precision measures correctness of positive predictions, recall measures coverage of actual positives, F1 balances both, ROC-AUC compares models across thresholds.
+
+14. Loss Functions:
+    Binary and categorical cross-entropy for classification; hinge loss for SVM; MAE/MSE/Huber for regression; focal loss handles class imbalance.
+
+15. Deep Learning Basics:
+    Neural networks learn complex nonlinear relationships using weights, bias, and activation functions (ReLU, sigmoid, softmax); architectures include MLPs, CNNs, RNNs (LSTM/GRU), and autoencoders.
+
+
+
+
+
+
+
+Practical covered-
+	->Scikit-learn
+	->Performed data preprocessing using Standardization, Min-Max Scaling, and Normalization to prepare numerical features for machine learning models.
+	->Applied Label Encoding and One-Hot Encoding to convert categorical data into machine-readable formats.
+	->Handled missing values using Mean and Median Imputation techniques with SimpleImputer.
+	->Generated a synthetic classification dataset and split it into training and testing sets to avoid data leakage.
+	->Trained multiple classification models including Logistic Regression, Decision Tree, SVM, and KNN.
+	->Applied appropriate feature scaling for distance- and gradient-based models.
+	->Evaluated model performance using accuracy score on test data.
+	->Compared multiple models to analyze performance differences and understand model behaviour
+
+
+
+
+Minutes of meeting-
+	->Discussed about Agentic communication and message formatting
+	->Self driven UI-
+		->RAG for theme JSON(pre config)
+		->RAG for data JSON using sample theme(config)
+		->Merge theme and Data JSON(config)
+		->Android framework(execution)

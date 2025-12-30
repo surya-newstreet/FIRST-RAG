@@ -1,0 +1,92 @@
+===============================
+TOPIC: String
+(3 problems)
+===============================
+
+===============================
+1) Reverse Words in a String (LeetCode 151)
+===============================
+Idea (2 lines):
+Split by whitespace (auto-handles multiple spaces), then reverse the list.
+Join back with single spaces.
+
+Python (LeetCode-ready):
+```python
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        parts = s.split()
+        parts.reverse()
+        return " ".join(parts)
+```
+
+===============================
+2) Longest Palindromic Substring (LeetCode 5)
+===============================
+Idea (2 lines):
+Expand around every center (odd and even) and track the best window.
+O(n^2) time, O(1) extra space.
+
+Python (LeetCode-ready):
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        if n <= 1:
+            return s
+
+        best_l, best_r = 0, 0  # inclusive
+
+        def expand(l: int, r: int) -> None:
+            nonlocal best_l, best_r
+            while l >= 0 and r < n and s[l] == s[r]:
+                l -= 1
+                r += 1
+            # went one step too far
+            l += 1
+            r -= 1
+            if r - l > best_r - best_l:
+                best_l, best_r = l, r
+
+        for i in range(n):
+            expand(i, i)       # odd
+            expand(i, i + 1)   # even
+
+        return s[best_l:best_r + 1]
+```
+
+===============================
+3) Implement ATOI (LeetCode 8)
+===============================
+Idea (2 lines):
+Parse sign + digits, stop on first non-digit; clamp into 32-bit signed range.
+Carefully handle overflow by checking before multiplying by 10.
+
+Python (LeetCode-ready):
+```python
+class Solution:
+    def myAtoi(self, s: str) -> int:
+        i, n = 0, len(s)
+        while i < n and s[i] == ' ':
+            i += 1
+
+        sign = 1
+        if i < n and s[i] in '+-':
+            sign = -1 if s[i] == '-' else 1
+            i += 1
+
+        INT_MAX = 2**31 - 1
+        INT_MIN = -2**31
+
+        val = 0
+        while i < n and s[i].isdigit():
+            d = ord(s[i]) - ord('0')
+
+            # overflow check before val = val*10 + d
+            if val > (INT_MAX - d) // 10:
+                return INT_MAX if sign == 1 else INT_MIN
+
+            val = val * 10 + d
+            i += 1
+
+        return sign * val
+```

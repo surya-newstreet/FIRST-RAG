@@ -1,0 +1,262 @@
+1. What is a Transformer?
+
+The Transformer is the go-to deep learning architecture powering modern models such as GPT, BERT, Gemini, and LLaMA.
+It is widely used in text, image, and audio tasks.
+
+The core innovation of transformers is the attention mechanism, which allows models to:
+
+Process the entire sequence at once
+Capture long-range dependencies
+Avoid sequential computation like RNNs
+
+2. High-Level Structure of a Transformer
+
+A transformer consists of three main parts:
+	Embeddings
+	Transformer Blocks
+	Output Representations
+
+3. Embeddings
+
+Transformers cannot process text directly, so text is converted into numeric vectors called embeddings.
+Steps to create embeddings:
+	Tokenization
+	Token Embedding
+	Positional Embedding
+	Final Input Embedding
+
+3.1 Tokenization
+	Input text is split into tokens (words or subwords)
+	A fixed vocabulary is created before training
+	Each token is assigned a unique token ID
+"I love AI" → [12, 453, 9821]
+	Token IDs themselves have no meaning.
+
+3.2 Token Embeddings
+	Token IDs are used to look up vectors from a learned embedding matrix
+	Each token has a static embedding vector
+	These embeddings are learned during training
+	During inference, embeddings remain fixed
+These are called token embeddings, not word embeddings (because tokens can be subwords).
+
+3.3 Positional Embeddings
+- Transformers do not naturally understand word order.
+- Positional embeddings encode the position of each token
+- They are added to token embeddings
+= Final Embedding = Token Embedding + Positional Embedding
+
+4. Transformer Block
+A transformer block is the core building unit of the model.
+Each block contains:
+	Multi-Head Self-Attention
+	Feed Forward Network (MLP)
+Multiple blocks are stacked, and as embeddings pass through them, the model’s understanding of each token improves.
+Example:
+- GPT-2 (small) has 12 transformer blocks
+
+5. Multi-Head Self-Attention
+Purpose
+Self-attention answers the question:
+“For this token, which other tokens should I pay attention to, and how much?”
+This allows each token to be influenced by other tokens in the sequence.
+
+5.1 Query, Key, and Value (Q, K, V)
+- Each token embedding is transformed into three vectors:
+	Query (Q) → what the token is looking for
+	Key (K) → what the token offers
+	Value (V) → the information the token carries
+These are computed using learned weight matrices:
+Q = X · Wq
+K = X · Wk
+V = X · Wv
+
+5.2 Attention Computation
+	1. Compute similarity scores:
+		Scores = Q · Kᵀ
+	2. Scale and apply mask (for GPT, future tokens are masked)
+	3. Apply softmax to get attention weights:
+		Attention Weights = softmax(Scores)
+	4. Multiply weights with Value vectors:
+		Output = Attention Weights · V
+	This produces a contextual embedding for each token.
+
+5.3 Multi-Head Attention
+- Attention is computed in multiple heads (e.g., 12 heads in GPT-2)
+- Each head learns different relationships:
+	syntax
+	semantics
+	short- and long-range dependencies
+Outputs from all heads are concatenated
+No head is discarded
+
+6. Feed Forward Network (MLP)
+The Feed Forward Network operates on each token independently.
+Key properties:
+1. No communication between tokens
+2. Adds non-linearity
+3. Learns complex patterns
+4. Refines token meaning
+
+Typical structure:
+Linear → Activation → Linear
+activation function basically adds the non linearity.
+Linear layers are useless when stacked one upon another so to tackle that we use activation function. This actually helps in bending space and create curves.
+
+7. Residual Connections (Important)
+Inside each transformer block:
+	Output of attention is added back to the input
+	Output of MLP is added back again
+This helps:
+	Stable training
+	Better information flow
+
+8. Encoder vs Decoder
+Encoder
+	Uses full self-attention
+	Produces contextual embeddings
+	Used in BERT
+Decoder
+	Uses masked self-attention
+	Predicts next token
+	Used in GPT
+GPT is decoder-only
+BERT is encoder-only
+
+9. Static vs Contextual Embeddings
+	Static embeddings: same vector for a token everywhere (initial embedding)
+	Contextual embeddings: token meaning changes based on context
+Example:
+	"bank" in river bank ≠ "bank" in money bank
+Contextual meaning emerges after self-attention layers, not from static embeddings.
+
+10. Training vs Inference
+Training
+	Embeddings and all weights (Wq, Wk, Wv, MLP weights) are learned
+	Model minimizes prediction loss
+Inference
+	All weights are fixed
+	Model only performs forward pass
+
+11. Transformer Layer Summary:
+
+Each transformer layer follows this flow:
+[ Input Embeddings ]
+        ↓
+[ Multi-Head Self-Attention ]
+        ↓
+[ Add & Normalize ]
+        ↓
+[ Feed Forward Network ]
+        ↓
+[ Add & Normalize ]
+        ↓
+[ Output Embeddings ]
+
+The encoder only takes input from the previous encoder where as the decoder takes from the last encoder and previous decoder.
+After getting the attention scores we will try to scale it down by dividing with the square root of the dimension of the query and key vectors. This is done to ensure more stable gradients.
+Recurrence is when a model remembers the past by looping information forward.
+Why recurrence is a problem:
+1. Slow
+2. Memory fades
+3. Hard to train
+
+Residual Connections:
+input flows forward remain unchanged but new information is added on top
+	instead of : output = F(x)
+	we do : output = x + F(x)
+
+Vanishing gradient means the learning signal becomes too weak, so the network stops learning.
+
+TOKENIZATION:
+Tokenization = breaking raw text into small units (tokens) that the model can handle.
+problem has infinte words and misspellings and new words.
+- Use subwords
+- small vocabulary
+- can build any words form pieces
+
+Vocabulary:
+BERT ≈ 30,000 tokens
+GPT ≈ 50,000 tokens
+
+bert has tokens like "##ing", "!" etc
+playing = "play" → 1234
+	  "##ing" → 567
+THE POPULAR TOKENIZATION METHODS:
+1. BPE(BYTE PAIR ENCODING) - GPT uses this 
+
+- take example of low, lower lowest
+- the common words will become single token and rare words becomes combination 
+- here the common words = low 
+
+"playing" → ["play", "ing"]
+"unbelievable" → ["un", "believe", "able"]
+
+2. WordPiece — BERT uses this
+- Split words to maximize likelihood, not just frequency.
+## means continuation
+playing → ["play", "##ing"]
+happily → ["happy", "##ly"]
+
+[CLS]  → start token
+[SEP]  → separator 	BERT  
+[MASK] → masked word
+
+<|endoftext|> 	- GPT 
+
+DECODER ARCHITECTURE:(TRAINING PERSPECTIVE)
+- Transformer contains encoder and decoder 
+- encoder is 6 encoder blocks same as decoder  
+- encoder contains self attention and ffn architecture of all the encoders are same, parameters values can vary.
+- decoder contains 3 blocks
+	masked self attention 
+	cross attention
+	ffn
+- after passing through all the 6 decoder we get the output
+- english to hindi translation
+ English sentence - we are friends
+ hindi sentence - hum dost hai
+- input of the decoder 
+	shifting 
+	tokenization
+	embedding
+	positional encoding 
+- We perform right shiting (add start token)
+- everything is passed through tokenizer and we get the tokens from it 
+- tokens are converted to vectors with the help of embedding layer.
+- postional encoding is added according to the position of the word 
+- embedding vectors and position vectors are added.
+	we get the result of it.
+we have to perform masked multi head attention, cross attention and ffn is applied 
+- now we have the embeddings of all the words and this is received by the masked multi head attention.
+- masking is implemented which means the contextual vector generated after a token is passed from masked multi head attention will only know the previous tokens not the ones after it.
+- add the original input vectors with the masked multi head attention vectors generated and then these are normalized by using layer normalization, this is done using mean and standard deviation. we do this to stabilize the training process.
+- cross attention block receives the normalized form and we try to find the similarity score between each hindi token and each english token. 2 seq are received as input. Query is received from the decoder part and key and value are received from the encoder part. 
+- After this we receive the output from the cross attention block and this will be added with the normalized input which was sent as a input for the cross attention along with the encoder input 
+- Now we again send this through the layer normalization again to reduce any large number.
+- Now the inputs are send through feed forward network.
+	consists of 2 layer 
+	layer 1 has 2048 neurons and relu is the activation function
+	layer 2 has 512 neurons and the activation function is lienar
+	input will be 512 neurons and then converted to 2048 dimensions and then converted to 512 neurons 
+	all the vectors are converted into matrix and sent as batch
+	the vectors will be converted into a larger matrix and non linearty can be captured with the help of relu and this helps in deeper analysis of patterns underlying 
+	all the batches will be broken to original state, now they have the ability to capture the non linear curves.
+	now addition is performed between normalized vector and then normalized again 
+- this will be the output of decoder 1 
+the output of the decoder wil be sent as input from decoder 1 
+at the end of all the decoder we have a linear function and softmax function
+
+conversation = [
+	{"role" : "system", "content": "you are a math teaher"} 
+]
+
+converation.append({"role" : "user", content: "waht is 2+1"})
+
+response = client.char.completion.create(
+	model = "gpt-4"
+	messages = conversation
+)
+
+ass_reply = responce.choices[0].message.content
+
+conversation.append({role : assistnat })

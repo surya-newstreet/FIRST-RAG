@@ -1,0 +1,130 @@
+===============================
+TOPIC: Heaps
+(3 problems)
+===============================
+
+===============================
+1) Max Heap + Min Heap Implementation (Interview)
+===============================
+Idea (2 lines):
+Heap is an array with parent/child relation; maintain heap property using sift-up/sift-down.
+Min-heap: parent <= child; Max-heap: parent >= child (same code with comparator).
+
+Python:
+```python
+from typing import List, Optional, Callable
+
+class BinaryHeap:
+    def __init__(self, less: Callable[[int, int], bool]):
+        # less(a, b) True means a should come before b in the heap
+        self.a: List[int] = []
+        self.less = less
+
+    def __len__(self) -> int:
+        return len(self.a)
+
+    def peek(self) -> Optional[int]:
+        return self.a[0] if self.a else None
+
+    def push(self, x: int) -> None:
+        self.a.append(x)
+        self._sift_up(len(self.a) - 1)
+
+    def pop(self) -> Optional[int]:
+        if not self.a:
+            return None
+        top = self.a[0]
+        last = self.a.pop()
+        if self.a:
+            self.a[0] = last
+            self._sift_down(0)
+        return top
+
+    def _sift_up(self, i: int) -> None:
+        while i > 0:
+            p = (i - 1) // 2
+            if self.less(self.a[i], self.a[p]):
+                self.a[i], self.a[p] = self.a[p], self.a[i]
+                i = p
+            else:
+                break
+
+    def _sift_down(self, i: int) -> None:
+        n = len(self.a)
+        while True:
+            l = 2 * i + 1
+            r = 2 * i + 2
+            best = i
+
+            if l < n and self.less(self.a[l], self.a[best]):
+                best = l
+            if r < n and self.less(self.a[r], self.a[best]):
+                best = r
+
+            if best != i:
+                self.a[i], self.a[best] = self.a[best], self.a[i]
+                i = best
+            else:
+                break
+
+def MinHeap() -> BinaryHeap:
+    return BinaryHeap(lambda x, y: x < y)
+
+def MaxHeap() -> BinaryHeap:
+    return BinaryHeap(lambda x, y: x > y)
+```
+
+===============================
+2) Kth Largest Element in an Array (LeetCode 215)
+===============================
+Idea (2 lines):
+Keep a min-heap of size k; it stores the k largest elements seen so far.
+Top of that heap is the kth largest.
+
+Python (LeetCode-ready):
+```python
+from typing import List
+import heapq
+
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        h = []
+        for x in nums:
+            heapq.heappush(h, x)
+            if len(h) > k:
+                heapq.heappop(h)
+        return h[0]
+```
+
+===============================
+3) Find Median from Data Stream (LeetCode 295)
+===============================
+Idea (2 lines):
+Two heaps: max-heap (lower half) and min-heap (upper half); balance sizes.
+Median is either top of max-heap or average of both tops.
+
+Python (LeetCode-ready):
+```python
+import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.low = []   # max-heap via negatives
+        self.high = []  # min-heap
+
+    def addNum(self, num: int) -> None:
+        # step 1: push into max-heap
+        heapq.heappush(self.low, -num)
+
+        # step 2: move largest of low to high to keep order
+        heapq.heappush(self.high, -heapq.heappop(self.low))
+
+        # step 3: rebalance sizes (low can have 1 extra)
+        if len(self.high) > len(self.low):
+            heapq.heappush(self.low, -heapq.heappop(self.high))
+
+    def findMedian(self) -> float:
+        if len(self.low) > len(self.high):
+            return float(-self.low[0])
+        return (-self.low[0] + self.high[0]) / 2.0
+```

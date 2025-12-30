@@ -1,0 +1,106 @@
+===============================
+TOPIC: Recursion
+(3 problems)
+===============================
+
+===============================
+1) Subset Sums (GFG / Striver)
+===============================
+Idea (2 lines):
+Generate all subset sums by choosing to take or not take each element.
+This is classic recursion over index; store sums, then sort if needed.
+
+Python:
+```python
+from typing import List
+
+def subset_sums(arr: List[int]) -> List[int]:
+    res = []
+    n = len(arr)
+
+    def dfs(i: int, s: int) -> None:
+        if i == n:
+            res.append(s)
+            return
+        dfs(i + 1, s)           # not take
+        dfs(i + 1, s + arr[i])  # take
+
+    dfs(0, 0)
+    res.sort()
+    return res
+```
+
+===============================
+2) Combination Sum I (LeetCode 39 / Striver "Combination sum-1")
+===============================
+Idea (2 lines):
+Backtrack with an index; you can reuse the same candidate by not moving the index.
+Stop when target hits 0 (valid) or goes negative (dead end).
+
+Python (LeetCode-ready):
+```python
+from typing import List
+
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        res: List[List[int]] = []
+        candidates.sort()
+        n = len(candidates)
+
+        def backtrack(i: int, rem: int, path: List[int]) -> None:
+            if rem == 0:
+                res.append(path[:])
+                return
+            if i == n or rem < 0:
+                return
+
+            # take candidates[i] (can reuse)
+            if candidates[i] <= rem:
+                path.append(candidates[i])
+                backtrack(i, rem - candidates[i], path)
+                path.pop()
+
+            # skip candidates[i]
+            backtrack(i + 1, rem, path)
+
+        backtrack(0, target, [])
+        return res
+```
+
+===============================
+3) Palindrome Partitioning (LeetCode 131)
+===============================
+Idea (2 lines):
+Try every possible cut; only proceed if the prefix is a palindrome.
+Backtracking explores all partitions; precompute palindrome table for speed.
+
+Python (LeetCode-ready):
+```python
+from typing import List
+
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        n = len(s)
+        # dp[i][j] = s[i:j+1] is palindrome
+        dp = [[False] * n for _ in range(n)]
+        for i in range(n - 1, -1, -1):
+            for j in range(i, n):
+                if s[i] == s[j] and (j - i <= 2 or dp[i + 1][j - 1]):
+                    dp[i][j] = True
+
+        res: List[List[str]] = []
+        path: List[str] = []
+
+        def backtrack(start: int) -> None:
+            if start == n:
+                res.append(path[:])
+                return
+            for end in range(start, n):
+                if dp[start][end]:
+                    path.append(s[start:end + 1])
+                    backtrack(end + 1)
+                    path.pop()
+
+        backtrack(0)
+        return res
+```

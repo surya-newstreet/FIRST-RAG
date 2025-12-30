@@ -1,0 +1,251 @@
+===============================
+1) Number of Provinces (LeetCode 547)
+===============================
+Idea (2 lines):
+Treat each city as a node; an edge exists when isConnected[i][j] == 1.
+Count connected components using DFS/BFS over the adjacency matrix.
+
+Python (LeetCode-ready):
+```python
+from typing import List
+
+class Solution:
+    def findCircleNum(self, isConnected: List[List[int]]) -> int:
+        n = len(isConnected)
+        seen = [False] * n
+
+        def dfs(i: int) -> None:
+            seen[i] = True
+            for j in range(n):
+                if isConnected[i][j] == 1 and not seen[j]:
+                    dfs(j)
+
+        provinces = 0
+        for i in range(n):
+            if not seen[i]:
+                provinces += 1
+                dfs(i)
+        return provinces
+```
+
+===============================
+2) Connected Components Problem in Matrix (aka “count islands” in a binary grid)
+===============================
+Idea (2 lines):
+Each cell with value 1 is a node; neighbors are 4-directionally adjacent 1-cells.
+Count how many connected components of 1s exist via DFS/BFS flood.
+
+Python (general function):
+```python
+from typing import List
+
+def count_components(grid: List[List[int]]) -> int:
+    if not grid or not grid[0]:
+        return 0
+
+    m, n = len(grid), len(grid[0])
+    seen = [[False] * n for _ in range(m)]
+    dirs = [(1,0), (-1,0), (0,1), (0,-1)]
+
+    def dfs(r: int, c: int) -> None:
+        stack = [(r, c)]
+        seen[r][c] = True
+        while stack:
+            x, y = stack.pop()
+            for dx, dy in dirs:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < m and 0 <= ny < n and not seen[nx][ny] and grid[nx][ny] == 1:
+                    seen[nx][ny] = True
+                    stack.append((nx, ny))
+
+    components = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 1 and not seen[i][j]:
+                components += 1
+                dfs(i, j)
+
+    return components
+```
+
+===============================
+3) Rotten Oranges (LeetCode 994)
+===============================
+Idea (2 lines):
+Multi-source BFS starting from all initially rotten oranges (value 2).
+Expand minute by minute to rot adjacent fresh oranges (value 1).
+
+Python (LeetCode-ready):
+```python
+from typing import List
+from collections import deque
+
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        if not grid or not grid[0]:
+            return -1
+
+        m, n = len(grid), len(grid[0])
+        q = deque()
+        fresh = 0
+
+        for r in range(m):
+            for c in range(n):
+                if grid[r][c] == 2:
+                    q.append((r, c))
+                elif grid[r][c] == 1:
+                    fresh += 1
+
+        minutes = 0
+        dirs = [(1,0), (-1,0), (0,1), (0,-1)]
+
+        while q and fresh > 0:
+            for _ in range(len(q)):
+                r, c = q.popleft()
+                for dr, dc in dirs:
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < m and 0 <= nc < n and grid[nr][nc] == 1:
+                        grid[nr][nc] = 2
+                        fresh -= 1
+                        q.append((nr, nc))
+            minutes += 1
+
+        return minutes if fresh == 0 else -1
+```
+
+===============================
+4) Flood Fill (LeetCode 733)
+===============================
+Idea (2 lines):
+Run DFS/BFS from (sr, sc) and recolor all connected pixels that match the start color.
+Stop when you hit a different color or go out of bounds.
+
+Python (LeetCode-ready):
+```python
+from typing import List
+from collections import deque
+
+class Solution:
+    def floodFill(self, image: List[List[int]], sr: int, sc: int, color: int) -> List[List[int]]:
+        m, n = len(image), len(image[0])
+        start = image[sr][sc]
+        if start == color:
+            return image
+
+        q = deque([(sr, sc)])
+        image[sr][sc] = color
+        dirs = [(1,0), (-1,0), (0,1), (0,-1)]
+
+        while q:
+            r, c = q.popleft()
+            for dr, dc in dirs:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and image[nr][nc] == start:
+                    image[nr][nc] = color
+                    q.append((nr, nc))
+
+        return image
+```
+
+===============================
+5) Cycle Detection in Undirected Graph (BFS)
+===============================
+Idea (2 lines):
+BFS each component while tracking each node’s parent.
+If you see a visited neighbor that is NOT the parent, a cycle exists.
+
+Python (GFG-style: adj is List[List[int]]):
+```python
+from collections import deque
+from typing import List
+
+class Solution:
+    def isCycle(self, V: int, adj: List[List[int]]) -> bool:
+        visited = [False] * V
+
+        for start in range(V):
+            if visited[start]:
+                continue
+
+            q = deque([(start, -1)])
+            visited[start] = True
+
+            while q:
+                node, parent = q.popleft()
+                for nei in adj[node]:
+                    if not visited[nei]:
+                        visited[nei] = True
+                        q.append((nei, node))
+                    elif nei != parent:
+                        return True
+
+        return False
+```
+
+===============================
+6) Cycle Detection in Undirected Graph (DFS)
+===============================
+Idea (2 lines):
+DFS each component; pass parent along recursion.
+If you reach an already-visited neighbor that isn’t the parent, you found a cycle.
+
+Python (GFG-style):
+```python
+from typing import List
+
+class Solution:
+    def isCycle(self, V: int, adj: List[List[int]]) -> bool:
+        visited = [False] * V
+
+        def dfs(node: int, parent: int) -> bool:
+            visited[node] = True
+            for nei in adj[node]:
+                if not visited[nei]:
+                    if dfs(nei, node):
+                        return True
+                elif nei != parent:
+                    return True
+            return False
+
+        for i in range(V):
+            if not visited[i]:
+                if dfs(i, -1):
+                    return True
+        return False
+```
+
+===============================
+7) 0/1 Matrix (BFS Problem) (LeetCode 542)
+===============================
+Idea (2 lines):
+Multi-source BFS starting from all 0-cells (distance 0).
+Expand to neighbors and assign the shortest distance to a 0.
+
+Python (LeetCode-ready):
+```python
+from typing import List
+from collections import deque
+
+class Solution:
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        m, n = len(mat), len(mat[0])
+        dist = [[-1] * n for _ in range(m)]
+        q = deque()
+
+        for r in range(m):
+            for c in range(n):
+                if mat[r][c] == 0:
+                    dist[r][c] = 0
+                    q.append((r, c))
+
+        dirs = [(1,0), (-1,0), (0,1), (0,-1)]
+        while q:
+            r, c = q.popleft()
+            for dr, dc in dirs:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and dist[nr][nc] == -1:
+                    dist[nr][nc] = dist[r][c] + 1
+                    q.append((nr, nc))
+
+        return dist
+```

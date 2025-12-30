@@ -1,0 +1,381 @@
+│ Inputs → Weighted Sum → Activation │
+
+Neural networks tries to learn patterns between input and output by varying the weights
+A neural network is a system of equations that learns which inputs matter more to make correct predictions.
+In noraml ml:
+data is present and output is also we try to find the rules
+But in Neural networks:
+- It automatically learns complex rules
+- works when rules are unknown 
+- can handle image text speech patterns in large data
+Neuron is the smallest unit of neural networks
+It has: 
+1. INPUTS   3. Activation function
+2. Weights  4. Bias 
+
+Bias is like what the model should output by default before seeing any input.
+Without bias the neuron would only active when w·x > 0
+With the help of bias we can moves the activation threshold.
+Without bias many neurons never activate
+a neuron basically first computes z = wx + b
+Now after that the z is applied to activation function and 
+Now if the output is > 0 neuron activated, output < 0  neuron deactivated
+Weights are small random number
+- inputs are normalized or centered around 0
+- If no neurons cans then the z is often < 0 so when we give it to activation function like relu the neuron will never get activated
+- If the relu is 0 then the weight will not get updated and z starys < 0 so neuron is dead
+- With bias we will be able to activate these neurons as we are adding base and then the relu >0  so we can change weight and get the neuron to learn
+- Bias is one of the safe gaurd like if the intail layers die the later layers wont get any signal 
+Neuron working:
+	=> z= x1​w1​ + x2​w2​ + ... + b
+- If we remove the activation multiple layers will collapse into one linear equation
+- Then the learning process will become useless and curves will become straight lines 
+
+Activation Function:
+- if we dont have to activation function then it will become a linear model 
+- There is no use of using multiple layers
+- With AF it will become a curve instead of straight line
+- It will be easy to analyse the complex patterns 
+- Should this neuron be passed and how strongly
+
+ReLU(Rectified Linear Unit):
+	ReLU(z) = max(0,z)
+  when  Negative signal → ignore
+	Positive signal → pass through
+It is simple fast and helps deep networks learn
+
+Sigmoid (Probability Maker)
+The output range is between 0 and 1
+if z is -ve: output less than 0.5
+   z is 0 : output 0.5
+   z is +Ve : output 0.5 to 1
+as +ve increases then approach 1 and as -ve increases approach 0
+- Binary Classification output layer
+
+Softmax - Multi class probability
+- Takes multiple number and convert to probability
+- the sum of the probabilities should be 1 
+
+	ReLU → hidden layers
+	Sigmoid → binary output
+	Softmax → multi-class output
+	
+nn.Linear(...)
+nn.ReLU()
+
+The activation function in the hidden layers will only help us decide whether the feature is useful or not. The output layer will only convert learned answer into meaningful 
+		
+Neural networks are arranged in layers:
+	Input Layer → Hidden Layer(s) → Output Layer
+INPUT LAYER:
+- No computation
+- Just raw data input taking
+- no of neurons = no of features(only in input layer)
+
+HIDDEN LAYERS: 
+- performs computations 
+- extract patterns 
+- multiple hidden layers (each layer learns multiple patterns low level and high level)
+- no of neurons depends on our choice
+- it depends on problem complexity, size and whether we are dealing with underfitting or overfitting.
+
+OUTPUT LAYER:
+- This depends on the task 
+	-> Regression = 1 neuron 
+	-> Binary Classification = 1 neuron 
+	-> Multi class classification = N neuron 
+
+FORWARD PROPAGATION:
+- passing input data through a network to get an output 
+-> input -> weighted sum calculated -> activation applied -> output
+
+Multilayer networks will be able to understand complex patterns more than a single layered network. In nerual networks learning means it is the process of updating bias and weights to get accurate predictions
+
+LOSS FUNCTION: 
+	- Regression -> MSE
+	- Classification -> cross entorpy 
+
+BACKPROPAGATION:
+- So here first the forward pass happens then we get an output 
+- We compare the actual value to that of prediction 
+- Loss will give us how wrong we are
+- Now start from the output layer and measure how much each neuron contributed to that error
+
+An optimizer helps us in updating the weights and bias of a model using gradients that are computed during backpropagation
+- our goal here is to minimize the loss function
+=> during backpropagation we calculate gradient and optimizer decides on how to update the parameters
+
+-> loss function - what is wrong
+   gradient - which direction to move 
+   optimizer - how fast and how smartly to move
+
+learning rate controls size step while updating parameters
+- high overshoots and misses the mim
+- low too slow learning 
+- optimal smooth and fast learning 
+
+Stocastic Graident Descent:
+- min loss func by' moving weights in the dir suggested by gradient(steepest descent)
+
+3 types of GD:
+1. Batch GD : entire dataset is used per update
+2. Stochastic GD : uses one data point 
+3. Mini Batch GD : small batch is used per update
+
+SGD is noisy but fast
+w = w − η ⋅ ∂w∂L (happens for every data point)
+
+We first assign weights then pick a point then do forward pass, then find the loss, then back propagate where we try to reduce the loss by updating the weights and this process is repeated for every datapoint in the dataset.​
+
+SGD keeps changing the weights while seeing many data points, and over time the weights settle into a region that is the best compromise (average) for all points — not perfect for any single point, but good for most.
+
+SGD helps escape sharp local minima and often finds flatter minima, not guaranteed global minima.
+
+SDG (flat regions):
+- Here the loss function is moves very slowly and gradients are very small 
+- this is because the gradient(steepness) is very low and this makes it move very slow.
+
+SO noise in sdg which is like the disagreement of datapoints helps the model not to overfit for the data like instead of memorizing it starts generalizing the behaviour which is like learning instead of fixing a particular thing and this helps the model to understand the underlying pattern better.LIke if it listens to each data point it fixates so we are trying to constantly disturb it.
+
+Here noise is good:
+- Prevents overfitting 
+- prevents memorization
+- forces robustness
+
+Generalization - did the model learn the pattern or just memorize examples?
+Generalization = learning what is common, not what is specific.
+
+SGD’s noise prevents the model from fitting individual data points too exactly, forcing it to learn stable patterns that generalize to new data.
+
+PLAIN SDG:
+- slow takes too long 
+- zig zag wastes steps 
+- forgets the previous directions 
+
+SDG WITH MOMENTUM :
+momentum introduces the velocity which remembers the previous gradients 
+- consistent directions 
+- look at previous gradient and current one and combine both and move weights 
+- this helps in faster learning 
+- no zig zag and more noise is smoothed and training is easy
+
+(ADAM)Adaptive Moment Estimation
+- adma is an optimizer that automatically updates learning rate for each weight by 
+1. Momentum(past gradient memory)
+2. adaptive learning rates(scaling based on gradient history)
+
+SDG same learning rate for all weights, gets confused by noise, moves slowly in flat surface, needs careful tuning. 
+But adam does all this automatically.
+It has 2 simple ideas:
+1. Memory(momentum)
+-It remebers the past gradients 
+-reduces zig zag and speeds up
+2. Adaptive learning rate
+- Like every weight gets its own learning rate
+
+Why adam:
+1. speed ups in flat regions 
+2. doesnt overshoot steep regions
+3. Works well with noisy data
+
+But adam may over fit and sometimes worse on unseen data
+
+SDG -> BETTER GENERALIZATION 
+Adam -> GASTER CONVERGENCE
+
+When to use adam:
+- model is deep
+- training is slow
+- gradients are noisy
+- you want quick resuls
+
+SDG
+- more about final accuracy 
+- VISION/ CNN TASKS
+- trainging time is not critical 
+
+PYTORCH:
+this is a deep learning framework.
+- builds nn, does backpropagation automatically, provides optimizers, runs on cpu and gpu
+- it writes math for gradients 
+
+with pytorch
+- define model 
+- define loss 
+- choose optimizer
+- train 
+
+PYTORCH - everything is tensor
+helps us teach nn how to learn
+- stores data
+- builds nn
+- calculate gradient
+- update weights 
+- it is a container for number, vector, matrix, multi dim array
+	import torch
+	x = torch.tensor([1.0, 2.0, 3.0])
+python uses tensor instead of lists and arr
+
+Writing code:
+every nn inherits from the base class - nn.Module
+class model(nn.Module):
+	- tells this class has trainable weights
+
+def __init__(self):
+	super().__init__()
+	self.fc1 = nn.Linear(2,16)
+	self.relu = nn.Relu()
+	self.fc2 = nn.Linear(16,1)
+
+input has 2 features and output has 1 and hidden layer has 16 neurons 
+linear layer contains weights and bias 
+
+CODING:
+1. import libraries
+import torch
+import torch.nn as nn
+
+2. Define the model(class)
+class model(nn.Module):
+	def __init__(self)
+	super.__init__(self)
+	self.fc1 = nn.Linear(2,16)
+	self.relu = nn.ReLU()
+	self.fc2 = nn.Linear(16,1)
+
+- define how many inputs
+- How many hidden neurons
+- How many outputs	
+
+3. Forward Propagation
+
+def forward(self,x):
+	x = self.fc1(x)
+	x = self.relu(x)
+	x = self.fc2(x)
+	return x
+	
+4. create the model object 
+	mymodel = model()
+
+5. Define loss funcion
+	loss_fn = nn.MSELoss()
+
+6. Define Optimizer
+	optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(epochs):
+	outputs = model(inputs)
+	loss = loss_fun(outputs, targets)
+	optimizer.zero_grad()
+	loss.backward()
+	optimizer.step()
+
+first we have to :
+1. import
+2. class model which should contain constructor and forward
+	- call our model as object 
+3. loss_fun
+4. optimizer
+5. epochs
+6. loop of epochs:
+	- prediction
+	- loss
+	- optimizer
+	- loss.backward
+	- optimizer
+	- print epochs 
+take input and check for this
+
+in pytorch we have batch_size and we also have loading of dataset and we have to load it like the input features belong to x and output belong to y
+
+x = df.iloc[:, :-1].values
+y = df.iloc[:, -1].values
+
+now we have to convert these into tensors as in pytorch we only deal with tensors convert everything to tensors.
+
+
+
+1. This is the path we contain the dataset
+data_path = "/home/agirekula/Documents/Programming/data.csv"
+
+2. df = pd.read_csv(data_path)
+3. convert to tensors
+4. Normalize features
+5. Feature scaling(normalization and standardization)
+6. Dataloaders
+7. Define Model 
+8. Loss and optimizer
+9. Training loop 
+10. Input testing
+
+In batch size = 100 means after every 100 samples we try to update the weights.
+so like the no of time we split the data = dataset_Size / batch_Size
+
+and each epoch will run on the all of the dataset meaning it will on each and every batch.
+	“Grab N samples → update → grab next N → update → repeat”
+	
+Batch size vs epoch:
+As we have smaller batch size 
+- we have more updates
+- we have noisy gradients but because of this we have better generalization 
+- slower per epoch
+
+As we have larger batch size
+- fewer updates
+- stable gradients 
+- but we might overfit for the data and this needs more smooth 
+
+pytorch vs tensorflow(both of these are deep learning frameworks)
+- pytorch is for research and debugging 
+- feels more like pythonic 
+
+- tensorflow is mainly for the production, deployment standard
+- this is designed for industry scale systems
+
+BOTH of these does same core job:
+- build nn
+- compute gradients 
+- train models using optimizer 
+- run on gpu cpu and tpu 
+
+IN tensorflow we first try to declare before running anything
+- its like define and then execute
+- more framework driven but pytorch is more like pythonic type
+
+so like when it comes to pytorch:
+- it is easy to write
+- easy flow
+- looks like normal python 
+- errors are easy to debug
+
+tensorflow:
+- it is first tested and then kept as static or frozen due to this execution becomes faster
+- hard to debug intially
+- it will become better once teh model is stable
+
+The building style is different for both of these:
+- in pytorch we explicitly control everything
+- it is easy to customize
+- easy in printing tensors, python debugger, and the error messages are clear 
+
+PYTORCH DOMINATES:
+	Research
+	LLMs (GPT, LLaMA, BERT)
+	Vision models
+	Rapid prototyping
+
+TENSORFLOW DOMINATES:
+	Enterprise products
+	Mobile / edge devices
+	Google ecosystem
+	Large-scale serving
+	
+TENSORFLOW:
+as we have tensor in the pytorch we have "constant" in tensorflow
+- it can be a number, vector, matrix, multi dim array
+
+in tensorflow we dont have to explicitly declare the forward function 
+model = tf.keras.Sequential([
+	tf.keras.layers.Dense(16, activation = 'relu', input shape = (2,)),
+	tf.keras.layers.Dense(1)])
